@@ -19,7 +19,10 @@ package azkaban.utils;
 import azkaban.Constants;
 import azkaban.Constants.ConfigurationKeys;
 import azkaban.alert.Alerter;
-import azkaban.executor.*;
+import azkaban.executor.ExecutableFlow;
+import azkaban.executor.Executor;
+import azkaban.executor.ExecutorLoader;
+import azkaban.executor.ExecutorManagerException;
 import azkaban.executor.mail.DefaultMailCreator;
 import azkaban.executor.mail.MailCreator;
 import azkaban.metrics.CommonMetrics;
@@ -39,14 +42,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.mail.internet.AddressException;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -189,9 +186,13 @@ public class Emailer extends AbstractMailer implements Alerter {
      * @return
      */
     private boolean sendMessage(String azkabanName, String flowId, int executionId, long startTime, long endTime, String status) {
-        String prdUrl = "https://mkl-datacenter.mmall.com/data-c";
-        //String uatUrl = "http://mkl-datacenter.uat1.rs.com/data-c";
-        String url = prdUrl + "/api/conf/monitorRule/isSendTextMessage?azkabanName="
+        //TODO 环境切换后续优化
+        String baseUrl;
+        String uatUrl = "http://mkl-datacenter.uat1.rs.com/data-c";
+        String stgUrl = "http://mkl-datacenter.redstarclouds.cn/data-c";
+        String prdUrl = "https://mkl-datacenter.redstarclouds.com/data-c";
+        baseUrl = stgUrl;
+        String url = baseUrl + "/api/conf/monitorRule/isSendTextMessage?azkabanName="
                 + azkabanName + "&flowId=" + flowId + "&executionId=" + executionId +
                 "&startTime=" + startTime + "&status=" + status + "&endTime=" + endTime;
         //发送get请求

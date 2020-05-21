@@ -416,6 +416,7 @@ public class FlowRunner extends EventHandler implements Runnable {
    */
   private void runFlow() throws Exception {
     this.logger.info("Starting flows");
+    //跑任务
     runReadyJob(this.flow);
     updateFlow();
 
@@ -605,9 +606,11 @@ public class FlowRunner extends EventHandler implements Runnable {
 
         for (final String startNodeId : ((ExecutableFlowBase) node).getStartNodes()) {
           final ExecutableNode startNode = flow.getExecutableNode(startNodeId);
+          this.logger.info("开始执行runReadyJob");
           runReadyJob(startNode);
         }
       } else {
+        this.logger.info("开始执行runExecutableNode");
         runExecutableNode(node);
       }
     }
